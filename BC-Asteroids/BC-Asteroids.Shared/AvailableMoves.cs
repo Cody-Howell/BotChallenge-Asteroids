@@ -1,4 +1,6 @@
-﻿namespace BC_Asteroids.Shared;
+﻿using HowlDev.Simulation.Physics.Primitive2D;
+
+namespace BC_Asteroids.Shared;
 
 /// <summary>
 /// The server takes in certain string types. You can write your own or use these helper 
@@ -11,6 +13,7 @@
 /// <list type="bullet">
 ///     <item><c>PointAt - Left - Right</c></item>
 ///     <item><c>Accelerate - Brake</c></item>
+///     <item><c>Fire</c></item>
 /// </list>
 /// Again, only the most recent commands (latest in the returned List) will be executed. 
 /// </summary>
@@ -56,7 +59,9 @@ public static class AvailableMoves {
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static string Accelerate(double a) {
         if (a < -1 || a > 1)
-            throw new ArgumentOutOfRangeException("Can only accelerate between -1 and 1 (forwards and backwards)");
+            throw new ArgumentOutOfRangeException("Can only accelerate between -1 and 1 (backwards and forwards respectively)");
+        if (a < -1 || a > 1)
+            throw new ArgumentOutOfRangeException("Can only accelerate between -1 and 1 (backwards and forwards respectively)");
 
         return $"ACCEL {Math.Round(a, 2)}";
     }

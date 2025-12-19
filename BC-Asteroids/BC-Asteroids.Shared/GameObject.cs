@@ -5,7 +5,7 @@ namespace BC_Asteroids.Shared;
 public class GameObject {
     public Vector2D Velocity { get; protected set; }
     public Circle2D Boundary { get; protected set; }
-    public virtual GameObjectTypes Type {get; protected set;}
+    public virtual GameObjectTypes Type { get; protected set; }
 
     public GameObject(Point2D center, Vector2D vector, double radius) {
         Boundary = new Circle2D(center, radius);

@@ -1,7 +1,7 @@
 # BotChallenge-Asteroids
 
 This is Bot Challenge 1 (of.. some amount)! There is a global Server app that runs the game, 
-a Human-player component with a web view, and the Bot programming section. 
+a console to program your bot in, and a React app (served through the default route in the Server app) to play as a human. 
 
 This README will be a lot more fully featured as the game is fleshed out. 
 

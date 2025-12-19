@@ -6,6 +6,7 @@ namespace BC_Asteroids.Shared;
 public class Player(Point2D center, Vector2D vector, int id) : GameObject(center, vector, Radius) {
     public int Id { get; set; } = id;
     private static int FireSpeed { get => ConfigClass.Config["player"]["fireSpeed"].AsInt(); }
+    private static double RotationSpeed { get => ConfigClass.Config["player"]["rotationSpeed"].AsDouble(); }
     private static double Radius { get => ConfigClass.Config["player"]["radius"].AsDouble(); }
     public Rotation2D VisualRotation { get; set; } = new Rotation2D();
 
