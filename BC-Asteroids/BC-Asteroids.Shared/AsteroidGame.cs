@@ -1,6 +1,4 @@
-﻿using HowlDev.Simulation.Physics.Primitve2D;
-
-namespace BC_Asteroids.Shared;
+﻿namespace BC_Asteroids.Shared;
 
 public class AsteroidGame {
     public Player Player { get; set; } = new Player() {

@@ -1,6 +1,4 @@
-﻿using HowlDev.Simulation.Physics.Primitve2D;
-
-namespace BC_Asteroids.Shared;
+﻿namespace BC_Asteroids.Shared;
 
 /// <summary>
 /// The server takes in certain string types. You can write your own or use these helper 

@@ -1,6 +1,5 @@
 ﻿using BC_Asteroids.Shared;
 using BC_Asteroids.Shared.Config;
-using HowlDev.Simulation.Physics.Primitve2D;
 
 namespace BC_Asteroids.Tests;
 
