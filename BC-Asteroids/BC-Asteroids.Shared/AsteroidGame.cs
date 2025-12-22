@@ -4,7 +4,7 @@ namespace BC_Asteroids.Shared;
 
 public class AsteroidGame {
     public Dictionary<int, Player> Players = [];
-    private Dictionary<int, List<string>> inputs = [];
+    private Dictionary<int, PlayerActions> inputs = [];
     public List<Asteroid> Asteroids { get; set; } = [];
     public List<Bullet> Bullets = [];
     public (int x, int y) size = (700, 700);
@@ -19,16 +19,12 @@ public class AsteroidGame {
     }
 
     public void SendUpdates(int id, List<string> updates) {
-        
-        foreach (string update in updates) {
-            
-
-        }
+        inputs[id] = GameInputParser.ParseCommands(updates);
     }
 
     public void GameTick() {
         foreach (KeyValuePair<int, Player> p in Players) {
-            p.Value.GameTick(size);
+            p.Value.GameTick(inputs[p.Key], size, AddBullet);
         }
         foreach (Asteroid a in Asteroids) {
             a.GameTick(size);
@@ -36,5 +32,9 @@ public class AsteroidGame {
         foreach (Bullet b in Bullets) {
             b.GameTick(size);
         }
+    }
+
+    private void AddBullet(Bullet b) {
+        Bullets.Add(b);
     }
 }

@@ -7,8 +7,10 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     public int Id { get; set; } = id;
     private static int FireSpeed { get => ConfigClass.Config["player"]["fireSpeed"].AsInt(); }
     private static double RotationSpeed { get => ConfigClass.Config["player"]["rotationSpeed"].AsDouble(); }
+    private static double MovementSpeed { get => ConfigClass.Config["player"]["movementSpeed"].AsDouble(); }
     private static double Radius { get => ConfigClass.Config["player"]["radius"].AsDouble(); }
     public Rotation2D VisualRotation { get; set; } = new Rotation2D();
+    public int Health { get => 100; }
 
     #region Intangibility
     private int intagibility = 0;
@@ -41,8 +43,10 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     public bool CanFire { get => timeToFire == 0; }
     #endregion
 
-    public new void GameTick((int x, int y) maxSize) {
-        base.GameTick(maxSize);
+    public void GameTick(PlayerActions action, (int x, int y) maxSize, Action<Bullet> fire) {
+        ProcessPlayerActions(action, fire);
+
+        GameTick(maxSize);
 
         TimeToFire++;
         IntangibleTicks++;
@@ -58,5 +62,28 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
         bulletSpeed = Vector2D.FromCoordinates(summedVectors);
 
         return new Bullet(Boundary.Center, bulletSpeed, Id);
+    }
+
+    private void ProcessPlayerActions(PlayerActions action, Action<Bullet> fire) {
+        if (action.Fire) {
+            Bullet? b = FireBullet();
+            if (b is not null) {
+                fire(b);
+            }
+        }
+
+        if (action.Brake) {
+            Velocity /= 3;
+        }
+        if (action.Acceleration is not null) {
+            Velocity.WithVelocity((double)(Velocity.Velocity + (action.Acceleration * MovementSpeed)));
+        }
+
+        if (action.Pointer is not null) {
+            VisualRotation = VisualRotation.MoveTo(Rotation2D.FromCoordinates((Point2D)action.Pointer), RotationSpeed);
+        }
+        if (action.RotationAdjustment is not null) {
+            VisualRotation = VisualRotation.MoveTo((double)action.RotationAdjustment, RotationSpeed);
+        }
     }
 }

@@ -11,9 +11,15 @@ public static class GameInputParser {
             switch (parameters[0]) {
                 case "POINTAT":
                     if (a.Pointer is null && a.RotationAdjustment is null) {
-                        double x = Convert.ToDouble(parameters[1]);
-                        double y = Convert.ToDouble(parameters[2]);
-                        a.Pointer ??= new Point2D(x, y);
+                        try {
+                            double x = Convert.ToDouble(parameters[1]);
+                            double y = Convert.ToDouble(parameters[2]);
+                            a.Pointer ??= new Point2D(x, y);
+                        } catch {
+                            if (parameters.Length < 2)
+                                throw new Exception($"Did not recieve enough parameters for POINTAT. Got: {parameters}");
+                            throw new Exception($"Could not parse values for the POINTAT arguments. Got: {parameters[1]}, {parameters[2]}");
+                        }
                     }
                     break;
                 case "LEFT":

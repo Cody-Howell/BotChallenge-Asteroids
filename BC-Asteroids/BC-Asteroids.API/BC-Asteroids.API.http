@@ -1,0 +1,6 @@
+@API = http://localhost:5038
+
+GET {{API}}/api/game/1
+Accept: application/json
+
+###

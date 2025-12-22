@@ -2,6 +2,7 @@
   "player": {
     "topSpeed": 70,
     "rotationSpeed": 70,
+    "movementSpeed": 20,
     "radius": 8, 
     "fireSpeed": 30
   },
