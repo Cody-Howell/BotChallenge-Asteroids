@@ -21,7 +21,7 @@ public class AsteroidGame {
     }
     public bool IsStarted {get; private set;}
     public List<Bullet> Bullets = [];
-    public (int x, int y) size = (1000, 1000);
+    public (int x, int y) size = (1500, 800); // Size for display is inverted, don't ask why
 
     public int Register() {
         int newId = Players.Count > 0 ? Players.Keys.Max() + 1 : 1;
