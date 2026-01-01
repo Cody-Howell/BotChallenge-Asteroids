@@ -29,6 +29,10 @@ app.MapGet("/api/game/register/{id}", (int id, AsteroidGame game) => {
     return playerId;
 });
 
+app.MapGet("/api/game/size", (AsteroidGame game) => {
+    return new { width = game.size.x, height = game.size.y };
+});
+
 app.MapPost("/api/game/move/{id}", (int id, AsteroidGame game, [FromBody] List<string> moves) => {
     game.SendUpdates(id, moves);
     return Results.Ok();

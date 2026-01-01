@@ -9,6 +9,7 @@ function App() {
   const [ships, setShips] = useState<Ship[]>([]);
   const [bullets, setBullets] = useState<InternalGameObject[]>([]);
   const [asteroids, setAsteroids] = useState<Asteroid[]>([]);
+  const [gameSize, setGameSize] = useState<{width: number, height: number}>({width: 1000, height: 1000});
 
   const setNewKeys = (keys: Set<string>) => {
     const moveArray = [];
@@ -30,15 +31,21 @@ function App() {
   }
 
   useEffect(() => {
-    const maxX = window.innerWidth;
-    const maxY = window.innerHeight;
-
-    const stars = [];
-    const numOfStars = 20;
-    for (let i = 0; i < numOfStars; i++) {
-      stars.push({x: Math.random() * maxX, y: Math.random() * maxY})
-    }
-    setStars(stars);
+    // Fetch game size from API
+    fetch('/api/game/size')
+      .then(res => res.json())
+      .then(data => {
+        setGameSize(data);
+        
+        // Generate stars within game boundaries
+        const stars = [];
+        const numOfStars = 100;
+        for (let i = 0; i < numOfStars; i++) {
+          stars.push({x: Math.random() * data.width, y: Math.random() * data.height})
+        }
+        setStars(stars);
+      })
+      .catch(err => console.error('Failed to fetch game size:', err));
   }, []);
 
   useEffect(() => {
@@ -113,7 +120,8 @@ function App() {
         asteroids={asteroids}
         stars={stars}
         leaderboard={[]} 
-        pressedKeys={keys} />
+        pressedKeys={keys}
+        gameSize={gameSize} />
     </>
   )
 }

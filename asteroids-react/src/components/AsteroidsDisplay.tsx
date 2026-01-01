@@ -9,6 +9,7 @@ interface AsteroidsDisplayProps {
   leaderboard: Array<{ name: string; score: number }>;
   pressedKeys: Set<string>;
   onPressedKeysChange: (keys: Set<string>) => void;
+  gameSize: {width: number, height: number};
 }
 
 const ReactAsteroids: React.FC<AsteroidsDisplayProps> = ({
@@ -19,7 +20,8 @@ const ReactAsteroids: React.FC<AsteroidsDisplayProps> = ({
   bullets = [],
   leaderboard = [],
   pressedKeys,
-  onPressedKeysChange
+  onPressedKeysChange,
+  gameSize
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +55,13 @@ const ReactAsteroids: React.FC<AsteroidsDisplayProps> = ({
 
   return (
     <>
-      <div id='game' ref={divRef} tabIndex={0}>
+      <div id='game' ref={divRef} tabIndex={0} style={{
+        width: `${gameSize.width}px`,
+        height: `${gameSize.height}px`,
+        border: '2px solid rgba(255, 255, 255, 0.3)',
+        margin: '0 auto',
+        position: 'relative'
+      }}>
         {ships.map((ship) => (
           <GameObject 
             class={ship.id === playerId ? "player" : "ship"} 
