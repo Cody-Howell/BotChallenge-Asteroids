@@ -57,7 +57,7 @@ const ReactAsteroids: React.FC<AsteroidsDisplayProps> = ({
         {ships.map((ship) => (
           <GameObject 
             class={ship.id === playerId ? "player" : "ship"} 
-            object={ship} 
+            object={{...ship, radius: 8}} 
             key={ship.id} 
           />
         ))}
