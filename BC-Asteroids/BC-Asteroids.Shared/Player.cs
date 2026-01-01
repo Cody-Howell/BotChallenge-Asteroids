@@ -67,7 +67,7 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     }
 
     public string ToTextFormat() {
-        return $"{id} {Boundary.Center.X} {Boundary.Center.Y} {VisualRotation.RotationAngle} {Velocity.Velocity} {Health} {TimeToFire} {IsIntangible} {Score}";
+        return $"{Id} {Boundary.Center.X} {Boundary.Center.Y} {VisualRotation.RotationAngle} {Velocity.Velocity} {Health} {TimeToFire} {IsIntangible} {Score}";
     }
 
     // public static Player FromTextFormat(string input) {
@@ -90,7 +90,7 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
         }
 
         if (action.Brake) {
-            Velocity /= 2;
+            Velocity /= 1.2;
         }
         if (action.Acceleration is not null) {
             Velocity += Vector2D.FromCoordinates(VisualRotation * (MovementSpeed * (double)action.Acceleration));

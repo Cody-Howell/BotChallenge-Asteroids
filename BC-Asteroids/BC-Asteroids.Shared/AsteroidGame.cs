@@ -33,6 +33,7 @@ public class AsteroidGame {
         foreach (Bullet b in Bullets) {
             b.GameTick(size);
         }
+        Bullets = [.. Bullets.Where(a => !a.ShouldBeDestroyed)];
     }
 
     private void AddBullet(Bullet b) {
