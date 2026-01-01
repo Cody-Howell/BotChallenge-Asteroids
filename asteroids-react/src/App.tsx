@@ -8,6 +8,7 @@ function App() {
   const [stars, setStars] = useState<{x: number, y: number}[]>([]);
   const [ships, setShips] = useState<Ship[]>([]);
   const [bullets, setBullets] = useState<InternalGameObject[]>([]);
+  const [asteroids, setAsteroids] = useState<Asteroid[]>([]);
 
   const setNewKeys = (keys: Set<string>) => {
     const moveArray = [];
@@ -50,7 +51,7 @@ function App() {
     });
 
     socket.addEventListener("message", (event) => {
-      console.log("Message received:", event.data);
+      // console.log("Message received:", event.data);
       const json = JSON.parse(event.data) as {Players: string[], Asteroids: string[], Bullets: string[]};
       const players: Ship[] = [];
       for (var player of json.Players) {
@@ -72,7 +73,18 @@ function App() {
           orientation: (Number.parseFloat(items[3]) + 90) % 360
         })
       }
-      setBullets(bullets)
+      setBullets(bullets);
+      const asteroids: Asteroid[] = [];
+      for (var asteroid of json.Asteroids) {
+        const items = asteroid.split(' ');
+        asteroids.push({
+          x: Number.parseFloat(items[0]),
+          y: Number.parseFloat(items[1]),
+          orientation: (Number.parseFloat(items[2]) + 90) % 360, 
+          radius: Number.parseFloat(items[4])
+        })
+      }
+      setAsteroids(asteroids);
     });
 
     socket.addEventListener("error", (event) => {
@@ -98,7 +110,7 @@ function App() {
         playerId={0}
         ships={ships}
         bullets={bullets}
-        asteroids={[]}
+        asteroids={asteroids}
         stars={stars}
         leaderboard={[]} 
         pressedKeys={keys} />

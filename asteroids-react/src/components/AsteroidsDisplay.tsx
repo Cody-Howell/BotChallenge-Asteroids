@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from "react";
 interface AsteroidsDisplayProps {
   ships: Array<Ship>;
   playerId?: number;
-  asteroids: Array<{ x: number; y: number; orientation: number; value: number }>;
+  asteroids: Array<Asteroid>;
   stars: Array<{ x: number; y: number;}>;
   bullets: Array<InternalGameObject>;
   leaderboard: Array<{ name: string; score: number }>;
@@ -68,7 +68,7 @@ const ReactAsteroids: React.FC<AsteroidsDisplayProps> = ({
           <GameObject class={"bullet"} object={bullet} key={i + "bullet"} />
         ))}
         {stars.map((star, i) => (
-          <GameObject class={"star"} object={{...star, orientation: 0, value: 0}} key={i + "star"} />
+          <GameObject class={"star"} object={{...star, orientation: 0, radius: 0}} key={i + "star"} />
         ))}
 {/* 
         <div
@@ -88,7 +88,7 @@ interface GameObjectProps {
     x: number;
     y: number;
     orientation: number;
-    value?: number;
+    radius?: number;
   };
 }
 
@@ -100,8 +100,8 @@ const GameObject: React.FC<GameObjectProps> = ({ class: className, object }) => 
       left: object.x,
       transform: `rotate(${object.orientation}deg)`
     };
-    if (object.value && object.value > 0) {
-      style.width = style.height = (object.value * 15) + "px";
+    if (object.radius) {
+      style.width = style.height = object.radius + "px";
     }
   }
   return <div className={className} style={style} />;

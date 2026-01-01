@@ -23,6 +23,6 @@ public class Asteroid : GameObject {
     }
 
     public string ToTextFormat() {
-        return $"{Boundary.Center.X} {Boundary.Center.Y} {Velocity.Rotation.RotationAngle} {Velocity.Velocity} {Level}";
+        return $"{Boundary.Center.X} {Boundary.Center.Y} {Velocity.Rotation.RotationAngle} {Velocity.Velocity} {Radius}";
     }
 }

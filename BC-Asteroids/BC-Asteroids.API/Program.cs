@@ -18,12 +18,10 @@ app.MapGet("/api/game/debug/{id}", (int id, AsteroidGame game) => {
 
 app.MapGet("/api/game/tick/{id}", (int id, AsteroidGame game, WebSocketService<int> service) => {
     game.GameTick();
-    try {
-        service.SendSocketMessage(id, JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game)));
-        
-    } catch (Exception e) {
-        Console.WriteLine($"Error sending socket message: {e.Message}");
-    }
+});
+
+app.MapGet("/api/game/start/{id}", (int id, AsteroidGame game, WebSocketService<int> service) => {
+    game.StartGame();
 });
 
 app.MapGet("/api/game/register/{id}", (int id, AsteroidGame game) => {

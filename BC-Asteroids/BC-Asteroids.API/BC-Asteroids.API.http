@@ -6,6 +6,8 @@ GET {{API}}/api/game/debug/1
 GET {{API}}/api/game/tick/1
 ### Register a new player
 GET {{API}}/api/game/register/1
+### Start Game
+GET {{API}}/api/game/start/1
 ### Send player moves
 POST {{API}}/api/game/move/1
 Content-Type: application/json
