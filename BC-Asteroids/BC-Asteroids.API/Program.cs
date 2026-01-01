@@ -16,7 +16,7 @@ app.MapGet("/api/game/debug/{id}", (int id, AsteroidGame game) => {
     return JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game));
 });
 
-app.MapGet("/api/game/tick/{id}", (int id, AsteroidGame game, IWebSocketService service) => {
+app.MapGet("/api/game/tick/{id}", (int id, AsteroidGame game, WebSocketService<int> service) => {
     game.GameTick();
     try {
         service.SendSocketMessage(id, JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game)));
@@ -36,10 +36,10 @@ app.MapPost("/api/game/move/{id}", (int id, AsteroidGame game, [FromBody] List<s
     return Results.Ok();
 });
 
-app.Map("/api/game/{id}", async (int id, HttpContext context, IWebSocketService service) => {
+app.Map("/api/game/{id}", async (int id, HttpContext context, WebSocketService<int> service) => {
     if (context.WebSockets.IsWebSocketRequest) {
         await service.RegisterSocket(context, id);
-        return Results.Ok();
+        return Results.Accepted(); // To satisfy the compiler
     } else {
         return Results.BadRequest("Not a web socket request.");
     }
@@ -50,7 +50,7 @@ ConfigClass.Initialize("./config.json");
 _ = Task.Run(async () => {
     using var scope = app.Services.CreateScope();
     var game = scope.ServiceProvider.GetRequiredService<AsteroidGame>();
-    var service = scope.ServiceProvider.GetRequiredService<IWebSocketService>();
+    var service = scope.ServiceProvider.GetRequiredService<WebSocketService<int>>();
     while (true) {
         game.GameTick();
         try {

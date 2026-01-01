@@ -8,10 +8,12 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     private static int FireSpeed { get => ConfigClass.Config["player"]["fireSpeed"].AsInt(); }
     private static double RotationSpeed { get => ConfigClass.Config["player"]["rotationSpeed"].AsDouble(); }
     private static double MovementSpeed { get => ConfigClass.Config["player"]["movementSpeed"].AsDouble(); }
+    private static double TopSpeed { get => ConfigClass.Config["player"]["topSpeed"].AsDouble(); }
     private static double Radius { get => ConfigClass.Config["player"]["radius"].AsDouble(); }
+    private const double BrakeValue = 1.2;
     public Rotation2D VisualRotation { get; set; } = new Rotation2D();
     public int Health { get; set; } = 100;
-    public int Score { get; set; }
+    public int Score { get; set; } = 0;
 
     #region Intangibility
     private int intangibility = 0;
@@ -90,10 +92,11 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
         }
 
         if (action.Brake) {
-            Velocity /= 1.2;
+            Velocity /= BrakeValue;
         }
         if (action.Acceleration is not null) {
             Velocity += Vector2D.FromCoordinates(VisualRotation * (MovementSpeed * (double)action.Acceleration));
+            Velocity = Velocity.WithVelocity(Math.Min(TopSpeed, Velocity.Velocity));
         }
     }
 }

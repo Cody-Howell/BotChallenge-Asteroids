@@ -18,8 +18,6 @@ function App() {
     if (keys.has(' ')) moveArray.push("FIRE")
     if (keys.has('b')) moveArray.push("BRAKE")
 
-    console.log("Sending update: ", moveArray);
-
     fetch(`/api/game/move/${gameId}`, {
       method: "POST",
       headers: {
