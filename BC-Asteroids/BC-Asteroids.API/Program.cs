@@ -1,29 +1,29 @@
 using BC_Asteroids.API;
 using BC_Asteroids.Shared;
+using BC_Asteroids.Shared.Config;
+using HowlDev.Web.Helpers.WebSockets;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<AsteroidGame>();
+builder.AddWebSocketService<int>();
 
 var app = builder.Build();
+app.UseWebSockets();
 
-app.MapGet("/api/game/{id}", (int id, AsteroidGame game) => {
-    AsteroidReturnDTO dto = new();
-    foreach (KeyValuePair<int, Player> a in game.Players) {
-        Player p = a.Value;
-        dto.Players.Add($"{a.Key} {p.Boundary.Center.X} {p.Boundary.Center.Y} {p.VisualRotation.RotationAngle} {p.Health} {p.TimeToFire}");
-    }
-    foreach (Bullet b in game.Bullets) {
-        dto.Bullets.Add($"{b.PlayerId} {b.Boundary.Center.X} {b.Boundary.Center.Y} {b.Velocity.Rotation.RotationAngle} {b.Velocity.Velocity} {b.Countdown}");
-    }
-    foreach (Asteroid a in game.Asteroids) {
-        dto.Asteroids.Add($"{a.Boundary.Center.X} {a.Boundary.Center.Y} {a.Velocity.Rotation.RotationAngle} {a.Velocity.Velocity} {a.Level}");
-    }
-    return dto;
+app.MapGet("/api/game/debug/{id}", (int id, AsteroidGame game) => {
+    return JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game));
 });
 
-app.MapGet("/api/game/tick/{id}", (int id, AsteroidGame game) => {
+app.MapGet("/api/game/tick/{id}", (int id, AsteroidGame game, IWebSocketService service) => {
     game.GameTick();
+    try {
+        service.SendSocketMessage(id, JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game)));
+        
+    } catch (Exception e) {
+        Console.WriteLine($"Error sending socket message: {e.Message}");
+    }
 });
 
 app.MapGet("/api/game/register/{id}", (int id, AsteroidGame game) => {
@@ -36,4 +36,33 @@ app.MapPost("/api/game/move/{id}", (int id, AsteroidGame game, [FromBody] List<s
     return Results.Ok();
 });
 
+app.Map("/api/game/{id}", async (int id, HttpContext context, IWebSocketService service) => {
+    if (context.WebSockets.IsWebSocketRequest) {
+        await service.RegisterSocket(context, id);
+        return Results.Ok();
+    } else {
+        return Results.BadRequest("Not a web socket request.");
+    }
+});
+
+ConfigClass.Initialize("./config.json");
+
+_ = Task.Run(async () => {
+    using var scope = app.Services.CreateScope();
+    var game = scope.ServiceProvider.GetRequiredService<AsteroidGame>();
+    var service = scope.ServiceProvider.GetRequiredService<IWebSocketService>();
+    while (true) {
+        game.GameTick();
+        try {
+            await service.SendSocketMessage(1, JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game)));
+            
+        } catch (Exception e) {
+            Console.WriteLine($"Error sending socket message: {e.Message}");
+        }
+
+        await Task.Delay(TimeSpan.FromSeconds(1) / 30);
+    }
+});
+
 app.Run();
+

@@ -16,7 +16,7 @@ public class GameObject {
         return Boundary.IsOverlapping(obj.Boundary);
     }
 
-    public void GameTick((int x, int y) maxSize) {
+    protected void GameTick((int x, int y) maxSize) {
         Point2D newCenter = Boundary.Center + Velocity;
         double x = newCenter.X;
         double y = newCenter.Y;

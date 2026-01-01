@@ -4,10 +4,10 @@ namespace BC_Asteroids.Shared;
 
 public class AsteroidGame {
     public Dictionary<int, Player> Players = [];
-    private Dictionary<int, PlayerActions> inputs = [];
+    private Dictionary<int, PlayerActions?> inputs = [];
     public List<Asteroid> Asteroids { get; set; } = [];
     public List<Bullet> Bullets = [];
-    public (int x, int y) size = (700, 700);
+    public (int x, int y) size = (1000, 1000);
 
     public int Register() {
         int newId = Players.Count > 0 ? Players.Keys.Max() + 1 : 1;
@@ -15,6 +15,7 @@ public class AsteroidGame {
                                       new Vector2D(0, 0),
                                       newId);
         Players.Add(newId, newPlayer);
+        inputs.Add(newId, null);
         return newId;
     }
 

@@ -4,23 +4,24 @@ using HowlDev.Simulation.Physics.Primitive2D;
 namespace BC_Asteroids.Shared;
 
 public class Player(Point2D center, Vector2D vector, int id) : GameObject(center, vector, Radius) {
-    public int Id { get; set; } = id;
+    public int Id { get; } = id;
     private static int FireSpeed { get => ConfigClass.Config["player"]["fireSpeed"].AsInt(); }
     private static double RotationSpeed { get => ConfigClass.Config["player"]["rotationSpeed"].AsDouble(); }
     private static double MovementSpeed { get => ConfigClass.Config["player"]["movementSpeed"].AsDouble(); }
     private static double Radius { get => ConfigClass.Config["player"]["radius"].AsDouble(); }
     public Rotation2D VisualRotation { get; set; } = new Rotation2D();
-    public int Health { get => 100; }
+    public int Health { get; set; } = 100;
+    public int Score { get; set; }
 
     #region Intangibility
-    private int intagibility = 0;
+    private int intangibility = 0;
     private int IntangibleTicks {
-        get => intagibility;
+        get => intangibility;
         set {
             if (value < 0) {
-                intagibility = value;
+                intangibility = value;
             } else {
-                intagibility = 0;
+                intangibility = 0;
             }
         }
     }
@@ -43,8 +44,9 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     public bool CanFire { get => timeToFire == 0; }
     #endregion
 
-    public void GameTick(PlayerActions action, (int x, int y) maxSize, Action<Bullet> fire) {
-        ProcessPlayerActions(action, fire);
+    public void GameTick(PlayerActions? action, (int x, int y) maxSize, Action<Bullet> fire) {
+        if (action is not null)
+            ProcessPlayerActions(action, fire);
 
         GameTick(maxSize);
 
@@ -72,18 +74,18 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
             }
         }
 
-        if (action.Brake) {
-            Velocity /= 3;
-        }
-        if (action.Acceleration is not null) {
-            Velocity.WithVelocity((double)(Velocity.Velocity + (action.Acceleration * MovementSpeed)));
-        }
-
         if (action.Pointer is not null) {
             VisualRotation = VisualRotation.MoveTo(Rotation2D.FromCoordinates((Point2D)action.Pointer), RotationSpeed);
         }
         if (action.RotationAdjustment is not null) {
-            VisualRotation = VisualRotation.MoveTo((double)action.RotationAdjustment, RotationSpeed);
+            VisualRotation = VisualRotation.AdjustBy((double)action.RotationAdjustment * RotationSpeed);
+        }
+
+        if (action.Brake) {
+            Velocity /= 2;
+        }
+        if (action.Acceleration is not null) {
+            Velocity += Vector2D.FromCoordinates(VisualRotation * (MovementSpeed * (double)action.Acceleration));
         }
     }
 }

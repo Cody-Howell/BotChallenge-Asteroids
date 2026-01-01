@@ -24,12 +24,12 @@ public static class GameInputParser {
                     break;
                 case "LEFT":
                     if (a.Pointer is null && a.RotationAdjustment is null) {
-                        a.RotationAdjustment = 1;
+                        a.RotationAdjustment = -1;
                     }
                     break;
                 case "RIGHT":
                     if (a.Pointer is null && a.RotationAdjustment is null) {
-                        a.RotationAdjustment = -1;
+                        a.RotationAdjustment = 1; // I guess this makes sense..
                     }
                     break;
                 case "FIRE":

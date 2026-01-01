@@ -1,7 +1,7 @@
 @API = http://localhost:5038
 
 ### Get game state
-GET {{API}}/api/game/1
+GET {{API}}/api/game/debug/1
 ### Tick the game
 GET {{API}}/api/game/tick/1
 ### Register a new player
@@ -11,7 +11,6 @@ POST {{API}}/api/game/move/1
 Content-Type: application/json
 
 [
-  "1 TurnLeft",
-  "1 Shoot"
+  "RIGHT"
 ]
 ###
