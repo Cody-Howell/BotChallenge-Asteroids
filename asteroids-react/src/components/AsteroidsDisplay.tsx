@@ -5,7 +5,7 @@ interface AsteroidsDisplayProps {
   playerId?: number;
   asteroids: Array<{ x: number; y: number; orientation: number; value: number }>;
   stars: Array<{ x: number; y: number;}>;
-  bullets: Array<{ x: number; y: number; orientation: number }>;
+  bullets: Array<InternalGameObject>;
   leaderboard: Array<{ name: string; score: number }>;
   pressedKeys: Set<string>;
   onPressedKeysChange: (keys: Set<string>) => void;

@@ -21,4 +21,8 @@ public class Asteroid : GameObject {
 
         VisualRotation = VisualRotation.AdjustBy(rotationSpeed);
     }
+
+    public string ToTextFormat() {
+        return $"{Boundary.Center.X} {Boundary.Center.Y} {Velocity.Rotation.RotationAngle} {Velocity.Velocity} {Level}";
+    }
 }

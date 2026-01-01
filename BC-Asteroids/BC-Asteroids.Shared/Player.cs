@@ -66,6 +66,14 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
         return new Bullet(Boundary.Center, bulletSpeed, Id);
     }
 
+    public string ToTextFormat() {
+        return $"{id} {Boundary.Center.X} {Boundary.Center.Y} {VisualRotation.RotationAngle} {Velocity.Velocity} {Health} {TimeToFire} {IsIntangible} {Score}";
+    }
+
+    // public static Player FromTextFormat(string input) {
+    //     return new(new(), new(), 1);
+    // }
+
     private void ProcessPlayerActions(PlayerActions action, Action<Bullet> fire) {
         if (action.Fire) {
             Bullet? b = FireBullet();

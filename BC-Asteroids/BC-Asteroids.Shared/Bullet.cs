@@ -13,4 +13,8 @@ public class Bullet(Point2D center, Vector2D vector, int id) : GameObject(center
         base.GameTick(maxSize);
         Countdown--;
     }
+
+    public string ToTextFormat() {
+        return $"{PlayerId} {Boundary.Center.X} {Boundary.Center.Y} {Velocity.Rotation.RotationAngle} {Velocity.Velocity} {Countdown}";
+    }
 }

@@ -7,6 +7,7 @@ function App() {
   const [keys, setKeys] = useState<Set<string>>(new Set());
   const [stars, setStars] = useState<{x: number, y: number}[]>([]);
   const [ships, setShips] = useState<Ship[]>([]);
+  const [bullets, setBullets] = useState<InternalGameObject[]>([]);
 
   const setNewKeys = (keys: Set<string>) => {
     const moveArray = [];
@@ -64,6 +65,16 @@ function App() {
         })
       }
       setShips(players);
+      const bullets: InternalGameObject[] = [];
+      for (var bullet of json.Bullets) {
+        const items = bullet.split(' ');
+        bullets.push({
+          x: Number.parseFloat(items[1]),
+          y: Number.parseFloat(items[2]),
+          orientation: (Number.parseFloat(items[3]) + 90) % 360
+        })
+      }
+      setBullets(bullets)
     });
 
     socket.addEventListener("error", (event) => {
@@ -88,7 +99,7 @@ function App() {
         onPressedKeysChange={setNewKeys}
         playerId={0}
         ships={ships}
-        bullets={[]}
+        bullets={bullets}
         asteroids={[]}
         stars={stars}
         leaderboard={[]} 
