@@ -20,6 +20,7 @@ public class AsteroidGame {
         }
     }
     public bool IsStarted { get; private set; }
+    public bool IsOver => Players.Count > 0 && Players.All(a => a.Value.Health <= 0);
     public List<Bullet> Bullets = [];
     public (int x, int y) size = (1500, 800); // Size for display is inverted, don't ask why
 

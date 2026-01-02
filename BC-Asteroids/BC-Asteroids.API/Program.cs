@@ -62,6 +62,8 @@ _ = Task.Run(async () => {
             Console.WriteLine($"Error sending socket message: {e.Message}");
         }
 
+        if (game.IsOver) break;
+
         await Task.Delay(TimeSpan.FromSeconds(1) / 30);
     }
 });
