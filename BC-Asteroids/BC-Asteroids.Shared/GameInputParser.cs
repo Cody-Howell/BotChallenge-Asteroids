@@ -22,14 +22,12 @@ public static class GameInputParser {
                         }
                     }
                     break;
-                case "LEFT":
+                case "TURN":
                     if (a.Pointer is null && a.RotationAdjustment is null) {
-                        a.RotationAdjustment = -1;
-                    }
-                    break;
-                case "RIGHT":
-                    if (a.Pointer is null && a.RotationAdjustment is null) {
-                        a.RotationAdjustment = 1; // I guess this makes sense..
+                        double adjustment = Convert.ToDouble(parameters[1]); 
+                        if (adjustment < -1 || adjustment > 1)
+                            throw new ArgumentOutOfRangeException("Can only accelerate between -1 and 1 (backwards and forwards respectively)");
+                        a.RotationAdjustment = adjustment;
                     }
                     break;
                 case "FIRE":

@@ -46,8 +46,8 @@ export default function Game() {
         const moveArray = [];
         if (keys.has('w')) moveArray.push("ACCEL 1")
         if (keys.has('s')) moveArray.push("ACCEL -1")
-        if (keys.has('d')) moveArray.push("RIGHT")
-        if (keys.has('a')) moveArray.push("LEFT")
+        if (keys.has('d')) moveArray.push("TURN 1")
+        if (keys.has('a')) moveArray.push("TURN -1")
         if (keys.has(' ')) moveArray.push("FIRE")
         if (keys.has('b')) moveArray.push("BRAKE")
 

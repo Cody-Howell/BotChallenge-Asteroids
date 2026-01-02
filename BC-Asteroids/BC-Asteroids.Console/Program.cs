@@ -36,6 +36,10 @@ if (size is null) {
     Console.WriteLine($"Game size is {size.width} x {size.height}");
 }
 
+response = await client.PostAsync($"/api/game/register/{id}", null);
+int playerId = (await response.Content.ReadFromJsonAsync<IdDTO>()).playerId;
+Console.WriteLine($"Player registered as {playerId}");
+
 Uri wsUrl = new("ws://" + url.Host + ":" + url.Port + $"/api/game/ws/{id}");
 Console.WriteLine($"Sending socket request to {wsUrl}...");
 
@@ -43,10 +47,6 @@ var socket = new ClientWebSocket();
 await socket.ConnectAsync(wsUrl, default);
 
 Console.WriteLine("Connected!");
-
-///
-/// YOUR BOT GOES BELOW
-///
 
 while (true) {
     var bytes = new byte[1024];
@@ -69,5 +69,24 @@ while (true) {
     }; 
 
     Console.WriteLine(gameObjects);
+
+    List<string> moves =
+    [
+        // Sample moves
+        AvailableMoves.Accelerate(1),
+        AvailableMoves.Left(),
+    ];
+
+    ///
+    /// YOUR BOT GOES HERE
+    ///
+    /// Make sure you read the README document for details about 
+    /// how the game works and, in particular, how this AvailableMoves 
+    /// process works. 
+    /// 
+    
+
+
+    await client.PostAsJsonAsync($"/api/game/move/{id}/{playerId}", moves);
 }
 // await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", default);

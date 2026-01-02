@@ -32,15 +32,27 @@ public static class AvailableMoves {
     /// </summary>
     /// <returns>Server-ready interpretation</returns>
     public static string Left() {
-        return "LEFT";
+        return "TURN -1";
     }
     /// <summary>
     /// Turns Right as much as possible in one tick. Primarily used by the Human interface.
     /// </summary>
     /// <returns>Server-ready interpretation</returns>
     public static string Right() {
-        return "RIGHT";
+        return "TURN 1";
     }
+
+    /// <summary>
+    /// Turns by a variable amount. Right is 1, left is -1. 
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public static string Turn(double a) {
+        if (a < -1 || a > 1)
+            throw new ArgumentOutOfRangeException("Can only accelerate between -1 and 1 (backwards and forwards respectively)");
+
+        return $"TURN {a}";
+    }
+
     /// <summary>
     /// If <see cref="Player.TimeToFire"/> is equal to 0, then you can execute a "FIRE" command
     /// (if not, the server will simply discard this command). 
@@ -58,8 +70,6 @@ public static class AvailableMoves {
     /// <returns>Server-ready interpretation</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static string Accelerate(double a) {
-        if (a < -1 || a > 1)
-            throw new ArgumentOutOfRangeException("Can only accelerate between -1 and 1 (backwards and forwards respectively)");
         if (a < -1 || a > 1)
             throw new ArgumentOutOfRangeException("Can only accelerate between -1 and 1 (backwards and forwards respectively)");
 
