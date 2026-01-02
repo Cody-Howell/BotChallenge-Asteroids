@@ -68,9 +68,10 @@ public class GameService {
     }
 
     public bool DeleteGame(int gameId) {
-        bool removed = _games.TryRemove(gameId, out _);
+        bool removed = _games.TryRemove(gameId, out var game);
         if (removed) {
             Console.WriteLine($"Deleted game with ID: {gameId}");
+            game!.StopGame();
         }
         return removed;
     }

@@ -38,6 +38,12 @@ public class AsteroidGame {
         IsStarted = true;
     }
 
+    public void StopGame() {
+        foreach (Player p in Players.Values) {
+            p.CalculateDamage(100);
+        }
+    }
+
     public void SendUpdates(int id, List<string> updates) {
         inputs[id] = GameInputParser.ParseCommands(updates);
     }

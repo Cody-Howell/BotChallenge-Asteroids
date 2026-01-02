@@ -90,10 +90,73 @@ export default function Game() {
                 console.error('Failed to fetch game size:', err);
                 setError(`Failed to fetch game size: ${err.message}`);
             });
+
     }, [gameId]);
 
     useEffect(() => {
         if (!gameId || gameId < 0) return;
+
+        // Fetch initial game state from debug endpoint
+        fetch(`/api/game/debug/${gameId}`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Failed to fetch initial game state: ${res.statusText}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const json = data as { Players: string[], Asteroids: string[], Bullets: string[] };
+                const scores: ScoreType[] = [];
+                const players: Ship[] = [];
+
+                for (var player of json.Players) {
+                    const items = player.split(' ');
+                    const health = Number.parseInt(items[5]);
+                    if (health > 0) {
+                        players.push({
+                            x: Number.parseFloat(items[1]),
+                            y: Number.parseFloat(items[2]),
+                            orientation: (Number.parseFloat(items[3]) + 90) % 360,
+                            id: Number.parseInt(items[0])
+                        });
+                    }
+                    scores.push({
+                        id: Number.parseInt(items[0]),
+                        score: Number.parseInt(items[8]),
+                        health: health
+                    })
+                }
+                setShips(players);
+
+                scores.sort((a, b) => b.score - a.score);
+                setScoreboard(scores);
+
+                const bullets: InternalGameObject[] = [];
+                for (var bullet of json.Bullets) {
+                    const items = bullet.split(' ');
+                    bullets.push({
+                        x: Number.parseFloat(items[1]),
+                        y: Number.parseFloat(items[2]),
+                        orientation: (Number.parseFloat(items[3]) + 90) % 360
+                    })
+                }
+                setBullets(bullets);
+
+                const asteroids: Asteroid[] = [];
+                for (var asteroid of json.Asteroids) {
+                    const items = asteroid.split(' ');
+                    asteroids.push({
+                        x: Number.parseFloat(items[0]),
+                        y: Number.parseFloat(items[1]),
+                        orientation: (Number.parseFloat(items[2]) + 90) % 360,
+                        radius: Number.parseFloat(items[4])
+                    })
+                }
+                setAsteroids(asteroids);
+            })
+            .catch(err => {
+                console.error('Failed to fetch initial game state:', err);
+            });
 
         console.log(`Connecting to game ${gameId}`)
         const socket = new WebSocket(`ws://localhost:5038/api/game/ws/${gameId}`);
