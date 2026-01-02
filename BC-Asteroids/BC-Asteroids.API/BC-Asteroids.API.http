@@ -2,8 +2,6 @@
 
 ### Get game state
 GET {{API}}/api/game/debug/1
-### Tick the game
-GET {{API}}/api/game/tick/1
 ### Register a new player
 GET {{API}}/api/game/register/1
 ### Start Game

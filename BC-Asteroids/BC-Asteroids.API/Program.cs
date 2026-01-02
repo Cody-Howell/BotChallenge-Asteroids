@@ -16,10 +16,6 @@ app.MapGet("/api/game/debug/{id}", (int id, AsteroidGame game) => {
     return JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game));
 });
 
-app.MapGet("/api/game/tick/{id}", (int id, AsteroidGame game, WebSocketService<int> service) => {
-    game.GameTick();
-});
-
 app.MapGet("/api/game/start/{id}", (int id, AsteroidGame game, WebSocketService<int> service) => {
     game.StartGame();
 });
@@ -67,5 +63,7 @@ _ = Task.Run(async () => {
         await Task.Delay(TimeSpan.FromSeconds(1) / 30);
     }
 });
+
+
 
 app.Run();
