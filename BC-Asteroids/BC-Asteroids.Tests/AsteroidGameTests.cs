@@ -34,7 +34,7 @@ public class AsteroidGameMovementTests {
         List<string> commands = [
           "LEFT"
         ];
-        game.SendUpdates(1, commands);
+        game.ReadUpdates(1, commands);
         game.GameTick();
     }
 }

@@ -43,7 +43,7 @@ public class GameService {
 
     public void UpdatePlayerToGame(int gameId, int playerId, List<string> moves) {
         if (_games.TryGetValue(gameId, out var game)) {
-            game.SendUpdates(playerId, moves);
+            game.ReadUpdates(playerId, moves);
             return;
         }
 
