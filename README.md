@@ -19,6 +19,8 @@ Click register in the top left. It should turn green. Navigate to the admin cons
 
 I use WebSockets to get game updates out, so it should feel quite smooth. For the human, the keys are WASD to move, Space to fire, and B to brake (which quickly stops you in space). 
 
+It's **important** to note that on the visualization, the hitboxes are not very accurate. They are originate from the top left, so while it looks empty up there, that's actually where they are. This is not a problem for the console or your bots.  
+
 ## What the game is
 
 This is a recreation of Asteroids. You are given a tiny little ship in an increasingly full screen of asteroids. 
