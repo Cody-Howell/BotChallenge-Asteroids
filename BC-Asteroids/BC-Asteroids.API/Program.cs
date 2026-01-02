@@ -13,6 +13,10 @@ builder.AddWebSocketService<int>();
 var app = builder.Build();
 app.UseWebSockets();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseRouting();
+
 // Generate random admin key
 string GenerateAdminKey(int length = 32)
 {
@@ -132,6 +136,8 @@ app.Map("/api/game/ws/{id}", async (int id, HttpContext context, WebSocketServic
         return Results.BadRequest(new { error = "Not a web socket request" });
     }
 });
+
+app.MapFallbackToFile("index.html");
 
 ConfigClass.Initialize("./config.json");
 
