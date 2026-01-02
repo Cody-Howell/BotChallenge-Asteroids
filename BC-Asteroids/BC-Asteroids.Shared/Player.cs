@@ -12,7 +12,12 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     private static double Radius { get => ConfigClass.Config["player"]["radius"].AsDouble(); }
     private const double BrakeValue = 1.2;
     public Rotation2D VisualRotation { get; set; } = new Rotation2D();
-    public int Health { get; set; } = 100;
+    public int Health {
+        get; set {
+            if (value < 0) field = 0;
+            else field = value;
+        }
+    } = 100;
     public int Score { get; set; } = 0;
 
     #region Intangibility
@@ -56,6 +61,11 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
         IntangibleTicks++;
     }
 
+    public void CalculateDamage(int damage) {
+        Health -= damage;
+        IntangibleTicks = -1000;
+    }
+
     public Bullet? FireBullet() {
         if (!CanFire) return null;
 
@@ -77,6 +87,8 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     // }
 
     private void ProcessPlayerActions(PlayerActions action, Action<Bullet> fire) {
+        if (Health <= 0) return;
+
         if (action.Fire) {
             Bullet? b = FireBullet();
             if (b is not null) {

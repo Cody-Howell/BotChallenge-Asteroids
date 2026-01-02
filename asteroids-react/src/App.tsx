@@ -5,11 +5,12 @@ import ReactAsteroids from './components/AsteroidsDisplay';
 function App() {
   const [gameId, setGameId] = useState(1);
   const [keys, setKeys] = useState<Set<string>>(new Set());
-  const [stars, setStars] = useState<{x: number, y: number}[]>([]);
+  const [stars, setStars] = useState<{ x: number, y: number }[]>([]);
   const [ships, setShips] = useState<Ship[]>([]);
   const [bullets, setBullets] = useState<InternalGameObject[]>([]);
   const [asteroids, setAsteroids] = useState<Asteroid[]>([]);
-  const [gameSize, setGameSize] = useState<{width: number, height: number}>({width: 1000, height: 1000});
+  const [gameSize, setGameSize] = useState<{ width: number, height: number }>({ width: 1000, height: 1000 });
+  const [scoreboard, setScoreboard] = useState<{ id: number, score: number }[]>([]);
 
   const setNewKeys = (keys: Set<string>) => {
     const moveArray = [];
@@ -36,12 +37,12 @@ function App() {
       .then(res => res.json())
       .then(data => {
         setGameSize(data);
-        
+
         // Generate stars within game boundaries
         const stars = [];
         const numOfStars = 100;
         for (let i = 0; i < numOfStars; i++) {
-          stars.push({x: Math.random() * data.width, y: Math.random() * data.height})
+          stars.push({ x: Math.random() * data.width, y: Math.random() * data.height })
         }
         setStars(stars);
       })
@@ -59,7 +60,8 @@ function App() {
 
     socket.addEventListener("message", (event) => {
       // console.log("Message received:", event.data);
-      const json = JSON.parse(event.data) as {Players: string[], Asteroids: string[], Bullets: string[]};
+      const json = JSON.parse(event.data) as { Players: string[], Asteroids: string[], Bullets: string[] };
+      const scores: { id: number, score: number }[] = [];
       const players: Ship[] = [];
       for (var player of json.Players) {
         const items = player.split(' ');
@@ -69,8 +71,15 @@ function App() {
           orientation: (Number.parseFloat(items[3]) + 90) % 360,
           id: Number.parseInt(items[0])
         })
+        scores.push({
+          id: Number.parseInt(items[0]),
+          score: Number.parseInt(items[8])
+        })
       }
       setShips(players);
+      // sort scores descending by score
+      scores.sort((a, b) => b.score - a.score);
+      setScoreboard(scores);
       const bullets: InternalGameObject[] = [];
       for (var bullet of json.Bullets) {
         const items = bullet.split(' ');
@@ -87,7 +96,7 @@ function App() {
         asteroids.push({
           x: Number.parseFloat(items[0]),
           y: Number.parseFloat(items[1]),
-          orientation: (Number.parseFloat(items[2]) + 90) % 360, 
+          orientation: (Number.parseFloat(items[2]) + 90) % 360,
           radius: Number.parseFloat(items[4])
         })
       }
@@ -112,14 +121,14 @@ function App() {
   return (
     <>
       {/* <input type='number' value={gameId} onChange={(e) => setGameId(Number.parseInt(e.target.value))} /> */}
-      <ReactAsteroids 
+      <ReactAsteroids
         onPressedKeysChange={setNewKeys}
-        playerId={0}
+        playerId={1}
         ships={ships}
         bullets={bullets}
         asteroids={asteroids}
         stars={stars}
-        leaderboard={[]} 
+        leaderboard={scoreboard}
         pressedKeys={keys}
         gameSize={gameSize} />
     </>

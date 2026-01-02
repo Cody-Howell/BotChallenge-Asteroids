@@ -57,7 +57,7 @@ _ = Task.Run(async () => {
         game.GameTick();
         try {
             await service.SendSocketMessage(1, JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game)));
-            
+
         } catch (Exception e) {
             Console.WriteLine($"Error sending socket message: {e.Message}");
         }
@@ -67,4 +67,3 @@ _ = Task.Run(async () => {
 });
 
 app.Run();
-

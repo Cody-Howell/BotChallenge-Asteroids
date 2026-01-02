@@ -3,7 +3,7 @@
 namespace BC_Asteroids.Shared;
 
 public class GameObject {
-    public Vector2D Velocity { get; protected set; }
+    public Vector2D Velocity { get; set; }
     public Circle2D Boundary { get; protected set; }
     public virtual GameObjectTypes Type { get; protected set; }
 

@@ -1,12 +1,12 @@
 using BC_Asteroids.Shared;
 
-namespace BC_Asteroids.API; 
+namespace BC_Asteroids.API;
 
 public static class GameDTOCreator {
 
     public static AsteroidReturnDTO GetDTOForGame(AsteroidGame game) {
         AsteroidReturnDTO dto = new();
-        foreach (KeyValuePair<int, Player> a in game.Players) {
+        foreach (KeyValuePair<int, Player> a in game.Players.Where(a => a.Value.Health > 0)) {
             Player p = a.Value;
             dto.Players.Add(p.ToTextFormat());
         }

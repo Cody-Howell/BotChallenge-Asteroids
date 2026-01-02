@@ -79,6 +79,7 @@ a {
 .player {
   position: absolute;
   background-image: url('./Spaceship.png');
+  color: hsl(235, 100%, 58%);
   background-size: contain;
   background-repeat: round;
   width: 15px;

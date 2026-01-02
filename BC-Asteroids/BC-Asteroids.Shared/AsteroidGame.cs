@@ -15,11 +15,11 @@ public class AsteroidGame {
             if (asteroidFrequency < 0) {
                 asteroidFrequency = asteroidFrequencyConfig;
             } else {
-                asteroidFrequency = value;   
+                asteroidFrequency = value;
             }
         }
     }
-    public bool IsStarted {get; private set;}
+    public bool IsStarted { get; private set; }
     public List<Bullet> Bullets = [];
     public (int x, int y) size = (1500, 800); // Size for display is inverted, don't ask why
 
@@ -45,13 +45,57 @@ public class AsteroidGame {
         if (IsStarted) {
             AsteroidFrequency--;
         }
-
         if (AsteroidFrequency == 0) {
             SpawnAsteroid();
         }
 
-        foreach (KeyValuePair<int, Player> p in Players) {
+        MoveObjectsAndDestroyBullets();
+        ProcessBulletCollisions();
+        ProcessPlayerCollisions();
+    }
+
+    private void ProcessPlayerCollisions() {
+        for (int i = 0; i < Players.Count; i++) {
+            if (Players[i].Health <= 0) continue;
+
+            Asteroid? a = Asteroids.FirstOrDefault(a => a.IsCollided(Players[i]));
+            if (a is not null) {
+                Player p = Players[i];
+                p.Velocity = p.Velocity.WithVelocity(0);
+                CalculateHitAsteroid(a, p);
+                p.CalculateDamage(34);
+            }
+        }
+    }
+
+    private void ProcessBulletCollisions() {
+        for (int i = 0; i < Bullets.Count; i++) {
+            Asteroid? a = Asteroids.FirstOrDefault(a => a.IsCollided(Bullets[i]));
+            if (a is not null) {
+                int playerId = RemoveBulletAndAddPoints(ref i, a.Level * 50);
+                CalculateHitAsteroid(a, Players[playerId]);
+                continue;
+            }
+            Player? p = Players.FirstOrDefault(a => a.Value.Id != Bullets[i].PlayerId && a.Value.Health > 0 && a.Value.IsCollided(Bullets[i])).Value;
+            if (p is not null) {
+                int playerId = RemoveBulletAndAddPoints(ref i, 20);
+                p.Health--;
+            }
+        }
+    }
+
+    private int RemoveBulletAndAddPoints(ref int i, int points) {
+        int playerId = Bullets[i].PlayerId;
+        Players[playerId].Score += points;
+        Bullets.RemoveAt(i);
+        i--;
+        return playerId;
+    }
+
+    private void MoveObjectsAndDestroyBullets() {
+        foreach (KeyValuePair<int, Player> p in Players.Where(p => p.Value.Health > 0)) {
             p.Value.GameTick(inputs[p.Key], size, AddBullet);
+            p.Value.Score++;
         }
         foreach (Asteroid a in Asteroids) {
             a.GameTick(size);
@@ -60,6 +104,16 @@ public class AsteroidGame {
             b.GameTick(size);
         }
         Bullets = [.. Bullets.Where(a => !a.ShouldBeDestroyed)];
+    }
+
+    private void CalculateHitAsteroid(Asteroid a, Player p) {
+        Asteroids.Remove(a);
+        p.Score += a.Level * 50;
+        if (a.Level == 3) return;
+        Vector2D newVec1 = new(Random.Shared.NextDouble() * 360, Random.Shared.NextDouble() * 1);
+        Vector2D newVec2 = new(Random.Shared.NextDouble() * 360, Random.Shared.NextDouble() * 1);
+        Asteroids.Add(new Asteroid(a.Boundary.Center, a.Velocity + newVec1, a.Level + 1, (int)Random.Shared.NextInt64(-5, 5)));
+        Asteroids.Add(new Asteroid(a.Boundary.Center, a.Velocity + newVec2, a.Level + 1, (int)Random.Shared.NextInt64(-5, 5)));
     }
 
     private void SpawnAsteroid() {
