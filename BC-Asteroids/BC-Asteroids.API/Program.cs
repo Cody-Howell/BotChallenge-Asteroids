@@ -87,10 +87,10 @@ app.MapGet("/api/admin/games", (HttpContext context, GameService games) => {
 // Public game endpoints
 app.MapGet("/api/game/debug/{id}", (int id, GameService games) => {
     AsteroidGame? game = games.GetGame(id);
-    if (game is null) {
-        return Results.NotFound(new { error = $"Game with ID {id} not found" });
-    }
-    return Results.Ok(JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game)));
+    // if (game is null) {
+    //     return Results.NotFound(new { error = $"Game with ID {id} not found" });
+    // }
+    return JsonSerializer.Serialize(GameDTOCreator.GetDTOForGame(game));
 });
 
 app.MapPost("/api/game/register/{gameId}", (int gameId, GameService games) => {
