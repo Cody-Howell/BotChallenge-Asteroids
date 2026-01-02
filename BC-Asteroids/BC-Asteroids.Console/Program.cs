@@ -37,7 +37,7 @@ if (size is null) {
 }
 
 response = await client.PostAsync($"/api/game/register/{id}", null);
-int playerId = (await response.Content.ReadFromJsonAsync<IdDTO>()).playerId;
+int playerId = (await response.Content.ReadFromJsonAsync<IdDTO>())!.playerId;
 Console.WriteLine($"Player registered as {playerId}");
 
 Uri wsUrl = new("ws://" + url.Host + ":" + url.Port + $"/api/game/ws/{id}");
@@ -74,7 +74,7 @@ while (true) {
     [
         // Sample moves
         AvailableMoves.Accelerate(1),
-        AvailableMoves.Left(),
+        AvailableMoves.Turn(0.1),
     ];
 
     ///
@@ -89,4 +89,3 @@ while (true) {
 
     await client.PostAsJsonAsync($"/api/game/move/{id}/{playerId}", moves);
 }
-// await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closed", default);
