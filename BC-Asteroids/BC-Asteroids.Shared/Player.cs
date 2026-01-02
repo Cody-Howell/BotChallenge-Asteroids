@@ -3,8 +3,8 @@ using HowlDev.Simulation.Physics.Primitive2D;
 
 namespace BC_Asteroids.Shared;
 
-public class Player(Point2D center, Vector2D vector, int id) : GameObject(center, vector, Radius) {
-    public int Id { get; } = id;
+public class Player : GameObject {
+    public int Id { get; }
     private static int FireSpeed { get => ConfigClass.Config["player"]["fireSpeed"].AsInt(); }
     private static double RotationSpeed { get => ConfigClass.Config["player"]["rotationSpeed"].AsDouble(); }
     private static double MovementSpeed { get => ConfigClass.Config["player"]["movementSpeed"].AsDouble(); }
@@ -36,6 +36,14 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     #endregion
     #region TimeToFire
     private int timeToFire = 0;
+
+    public Player(Point2D center, Vector2D vector, int id) : base(center, vector, Radius) {
+        Id = id;
+    }
+
+    public Player(Point2D center, Vector2D vector, int id, double radius) : base(center, vector, radius) {
+        Id = id;
+    }
 
     public int TimeToFire {
         get => timeToFire;
@@ -79,12 +87,22 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
     }
 
     public string ToTextFormat() {
-        return $"{Id} {Boundary.Center.X} {Boundary.Center.Y} {VisualRotation.RotationAngle} {Velocity.Velocity} {Health} {TimeToFire} {IsIntangible} {Score}";
+        return $"{Id} {Boundary.Center.X} {Boundary.Center.Y} {VisualRotation.RotationAngle} {Velocity.Velocity} {Health} {TimeToFire} {IsIntangible} {Score} {Boundary.Radius}";
     }
 
-    // public static Player FromTextFormat(string input) {
-    //     return new(new(), new(), 1);
-    // }
+    public static Player FromTextFormat(string input) {
+        string[] items = input.Split(' ');
+        Point2D center = new(Convert.ToDouble(items[1]), Convert.ToDouble(items[2]));
+        Vector2D vec = new(Convert.ToDouble(items[3]), Convert.ToDouble(items[4]));
+        Player p = new(center, vec, Convert.ToInt32(items[0]), Convert.ToDouble(items[9])) {
+            Health = Convert.ToInt32(items[5]), 
+            TimeToFire = Convert.ToInt32(items[6]), 
+            intangibility = Convert.ToBoolean(items[7]) ? 1 : 0, 
+            Score = Convert.ToInt32(items[8])
+        };
+
+        return p;
+    }
 
     private void ProcessPlayerActions(PlayerActions action, Action<Bullet> fire) {
         if (Health <= 0) return;
