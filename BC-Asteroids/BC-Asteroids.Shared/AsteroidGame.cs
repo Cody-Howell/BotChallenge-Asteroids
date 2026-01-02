@@ -78,7 +78,7 @@ public class AsteroidGame {
             }
             Player? p = Players.FirstOrDefault(a => a.Value.Id != Bullets[i].PlayerId && a.Value.Health > 0 && a.Value.IsCollided(Bullets[i])).Value;
             if (p is not null) {
-                int playerId = RemoveBulletAndAddPoints(ref i, 20);
+                RemoveBulletAndAddPoints(ref i, 20);
                 p.Health--;
             }
         }
