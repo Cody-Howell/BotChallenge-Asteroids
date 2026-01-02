@@ -6,7 +6,7 @@ interface AsteroidsDisplayProps {
   asteroids: Array<Asteroid>;
   stars: Array<{ x: number; y: number;}>;
   bullets: Array<InternalGameObject>;
-  leaderboard: Array<{ id: number; score: number }>;
+  leaderboard: Array<ScoreType>;
   pressedKeys: Set<string>;
   onPressedKeysChange: (keys: Set<string>) => void;
   gameSize: {width: number, height: number};
@@ -116,7 +116,7 @@ const GameObject: React.FC<GameObjectProps> = ({ class: className, object }) => 
 };
 
 interface LeaderboardProps {
-  scores: Array<{ id: number; score: number }>;
+  scores: Array<ScoreType>;
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ scores }) => {
@@ -124,7 +124,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ scores }) => {
     <div id='leaderboard' style={{ right: 0 }}>
       <h2>Leaderboard</h2>
       {scores.map((entry, i) => (
-        <p className='score' key={i}>{entry.id}: {entry.score}</p>
+        <p className='score' key={i}>{entry.id} ({entry.health}): {entry.score}</p>
       ))}
     </div>
   );

@@ -10,7 +10,7 @@ function App() {
   const [bullets, setBullets] = useState<InternalGameObject[]>([]);
   const [asteroids, setAsteroids] = useState<Asteroid[]>([]);
   const [gameSize, setGameSize] = useState<{ width: number, height: number }>({ width: 1000, height: 1000 });
-  const [scoreboard, setScoreboard] = useState<{ id: number, score: number }[]>([]);
+  const [scoreboard, setScoreboard] = useState<ScoreType[]>([]);
 
   const setNewKeys = (keys: Set<string>) => {
     const moveArray = [];
@@ -61,19 +61,23 @@ function App() {
     socket.addEventListener("message", (event) => {
       // console.log("Message received:", event.data);
       const json = JSON.parse(event.data) as { Players: string[], Asteroids: string[], Bullets: string[] };
-      const scores: { id: number, score: number }[] = [];
+      const scores: ScoreType[] = [];
       const players: Ship[] = [];
       for (var player of json.Players) {
         const items = player.split(' ');
-        players.push({
-          x: Number.parseFloat(items[1]),
-          y: Number.parseFloat(items[2]),
-          orientation: (Number.parseFloat(items[3]) + 90) % 360,
-          id: Number.parseInt(items[0])
-        })
+        const health = Number.parseInt(items[5]);
+        if (health > 0) {
+          players.push({
+            x: Number.parseFloat(items[1]),
+            y: Number.parseFloat(items[2]),
+            orientation: (Number.parseFloat(items[3]) + 90) % 360,
+            id: Number.parseInt(items[0])
+          });
+        }
         scores.push({
           id: Number.parseInt(items[0]),
-          score: Number.parseInt(items[8])
+          score: Number.parseInt(items[8]), 
+          health: health
         })
       }
       setShips(players);

@@ -5,9 +5,11 @@ type InternalGameObject = {
 }
 
 type Ship = InternalGameObject & {
-    id: number
+    id: number; 
 }
 
 type Asteroid = InternalGameObject & {
-    radius: number
+    radius: number;
 }
+
+type ScoreType = { id: number, score: number, health: number }

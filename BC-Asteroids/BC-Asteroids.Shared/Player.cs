@@ -63,7 +63,7 @@ public class Player(Point2D center, Vector2D vector, int id) : GameObject(center
 
     public void CalculateDamage(int damage) {
         Health -= damage;
-        IntangibleTicks = -1000;
+        IntangibleTicks = -60;
     }
 
     public Bullet? FireBullet() {

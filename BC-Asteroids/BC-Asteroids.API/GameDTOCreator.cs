@@ -6,7 +6,7 @@ public static class GameDTOCreator {
 
     public static AsteroidReturnDTO GetDTOForGame(AsteroidGame game) {
         AsteroidReturnDTO dto = new();
-        foreach (KeyValuePair<int, Player> a in game.Players.Where(a => a.Value.Health > 0)) {
+        foreach (KeyValuePair<int, Player> a in game.Players) {
             Player p = a.Value;
             dto.Players.Add(p.ToTextFormat());
         }

@@ -50,21 +50,23 @@ public class AsteroidGame {
         }
 
         MoveObjectsAndDestroyBullets();
-        ProcessBulletCollisions();
-        ProcessPlayerCollisions();
+        if (IsStarted) {
+            ProcessBulletCollisions();
+            ProcessPlayerCollisions();
+        }
     }
 
     private void ProcessPlayerCollisions() {
-        for (int i = 0; i < Players.Count; i++) {
-            if (Players[i].Health <= 0) continue;
+        foreach (KeyValuePair<int, Player> playerEntry in Players) {
+            Player player = playerEntry.Value;
+            if (player.Health <= 0 || player.IsIntangible) continue;
 
-            Asteroid? a = Asteroids.FirstOrDefault(a => a.IsCollided(Players[i]));
-            if (a is not null) {
-                Player p = Players[i];
-                p.Velocity = p.Velocity.WithVelocity(0);
-                CalculateHitAsteroid(a, p);
-                p.CalculateDamage(34);
-            }
+            Asteroid? asteroid = Asteroids.FirstOrDefault(a => a.IsCollided(player));
+            if (asteroid is null) continue;
+
+            player.Velocity = player.Velocity.WithVelocity(0);
+            CalculateHitAsteroid(asteroid, player);
+            player.CalculateDamage(34);
         }
     }
 
@@ -95,7 +97,8 @@ public class AsteroidGame {
     private void MoveObjectsAndDestroyBullets() {
         foreach (KeyValuePair<int, Player> p in Players.Where(p => p.Value.Health > 0)) {
             p.Value.GameTick(inputs[p.Key], size, AddBullet);
-            p.Value.Score++;
+            if (IsStarted)
+                p.Value.Score++;
         }
         foreach (Asteroid a in Asteroids) {
             a.GameTick(size);
