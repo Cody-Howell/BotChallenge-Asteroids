@@ -122,7 +122,13 @@ public class AsteroidGame : IGeneticRunner<int> {
     }
 
     private static double ThreatLevel(Player p, GameObject o) {
-        return 0.0;
+        double threat = 0.0;
+        double angleDistance = o.Velocity.Rotation.DistanceTo(Rotation2D.FromCoordinates(o.Boundary.Center, p.Boundary.Center));
+        if (angleDistance < 10) {
+            threat = 10 / angleDistance;
+            threat *= o.Velocity.Velocity / 10;
+        }
+        return threat;
     }
     #endregion
     #region Boring things
