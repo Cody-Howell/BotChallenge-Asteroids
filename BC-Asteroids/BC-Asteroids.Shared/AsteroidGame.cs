@@ -121,7 +121,7 @@ public class AsteroidGame : IGeneticRunner<int> {
         return input;
     }
 
-    private double ThreatLevel(Player p, GameObject o) {
+    private static double ThreatLevel(Player p, GameObject o) {
         return 0.0;
     }
     #endregion
