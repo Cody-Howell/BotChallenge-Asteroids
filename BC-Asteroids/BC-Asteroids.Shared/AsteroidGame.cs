@@ -1,9 +1,10 @@
 ﻿using BC_Asteroids.Shared.Config;
+using HowlDev.AI.Core;
 using HowlDev.Simulation.Physics.Primitive2D;
 
 namespace BC_Asteroids.Shared;
 
-public class AsteroidGame {
+public class AsteroidGame : IGeneticRunner<int> {
     public Dictionary<int, Player> Players = [];
     private Dictionary<int, PlayerActions?> inputs = [];
     public List<Asteroid> Asteroids { get; set; } = [];
@@ -26,12 +27,16 @@ public class AsteroidGame {
 
     public int Register() {
         int newId = Players.Count > 0 ? Players.Keys.Max() + 1 : 1;
+        AddPlayer(newId);
+        return newId;
+    }
+
+    private void AddPlayer(int id) {
         Player newPlayer = new Player(new Point2D(size.x / 2, size.y / 2),
                                       new Vector2D(0, 0),
-                                      newId);
-        Players.Add(newId, newPlayer);
-        inputs.Add(newId, null);
-        return newId;
+                                      id);
+        Players.Add(id, newPlayer);
+        inputs.Add(id, null);
     }
 
     public void StartGame() {
@@ -63,6 +68,64 @@ public class AsteroidGame {
         }
     }
 
+    #region IGeneticRunner implementation
+    public static IGeneticRunner<int> Initialize(IEnumerable<int> ids) {
+        AsteroidGame game = new();
+        foreach (int id in ids) {
+            game.AddPlayer(id);
+        }
+        game.StartGame();
+        return game;
+    }
+
+    public double[] GetRepresentation(int id) {
+        Player p = Players[id];
+        double[] neurons = new double[15];
+        neurons[0] = p.VisualRotation.DistanceTo(p.Velocity.Rotation) / 180;
+        neurons[1] = p.Velocity.Velocity / 100;
+
+        (double distance, Asteroid asteroid)[] closeAsteroids = [.. Asteroids.Select(a => (p.Boundary.Center.GetDistance(a.Boundary.Center), a)).Where(a => a.Item1 <= 300)];
+        (double angleDistance, double distance, double threat)[] gameObjectLocations = 
+            [.. closeAsteroids.Select((a => (
+                p.VisualRotation.DistanceTo(Rotation2D.FromCoordinates(p.Boundary.Center, a.asteroid.Boundary.Center)), 
+                a.distance, 
+                ThreatLevel(p, a.asteroid)
+            )))
+            .OrderBy(a => a.Item1)];
+        throw new NotImplementedException();
+    }
+
+    public void PrepareAction(int id, List<double> outputs) {
+        if (outputs.Count != 3) throw new Exception("Output not of expected length: 3");
+
+        List<string> moves = [];
+        moves.Add($"TURN {Clamp(outputs[0], -1, 1)}");
+        moves.Add($"ACCEL {Clamp(outputs[1], -1, 1)}");
+        if (Clamp(outputs[2], 0, 1) >= 0.5) {
+            moves.Add("FIRE");
+        }
+        ReadUpdates(id, moves);
+    }
+
+    public void RunTick() {
+        GameTick();
+    }
+
+    public double GetEvaluation(int id) {
+        return Players[id].Score;
+    }
+
+    private static double Clamp(double input, double start, double end) {
+        if (input > end) return end;
+        if (input < start) return start;
+        return input;
+    }
+
+    private double ThreatLevel(Player p, GameObject o) {
+        return 0.0;
+    }
+    #endregion
+    #region Boring things
     private void ProcessPlayerCollisions() {
         foreach (KeyValuePair<int, Player> playerEntry in Players) {
             Player player = playerEntry.Value;
@@ -140,4 +203,5 @@ public class AsteroidGame {
     private void AddBullet(Bullet b) {
         Bullets.Add(b);
     }
+    #endregion
 }

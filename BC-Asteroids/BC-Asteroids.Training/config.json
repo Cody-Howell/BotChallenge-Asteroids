@@ -1,0 +1,20 @@
+{
+  "player": {
+    "topSpeed": 20,
+    "rotationSpeed": 4,
+    "movementSpeed": 0.2,
+    "radius": 8, 
+    "fireSpeed": 30
+  },
+  "bullet": {
+    "defaultSpeed": 30,
+    "radius": 2, 
+    "duration": 120
+  },
+  "asteroid": {
+    "smallestRadius": 10
+  },
+  "game": {
+    "asteroidFrequency": 75
+  }
+}

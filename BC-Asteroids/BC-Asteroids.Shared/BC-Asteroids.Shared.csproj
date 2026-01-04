@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="HowlDev.AI.Core" Version="0.0.1" />
     <PackageReference Include="HowlDev.IO.Text.ConfigFile" Version="2.0.1" />
     <PackageReference Include="HowlDev.Simulation.Physics.Primitive2D" Version="0.8.3" />
   </ItemGroup>
