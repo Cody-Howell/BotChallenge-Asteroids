@@ -80,7 +80,7 @@ public class AsteroidGame : IGeneticRunner<int> {
 
     public double[] GetRepresentation(int id) {
         Player p = Players[id];
-        double[] neurons = new double[15];
+        double[] neurons = new double[23];
         neurons[0] = p.VisualRotation.DistanceTo(p.Velocity.Rotation) / 180;
         neurons[1] = p.Velocity.Velocity / 100;
 
@@ -92,7 +92,42 @@ public class AsteroidGame : IGeneticRunner<int> {
                 ThreatLevel(p, a.asteroid)
             )))
             .OrderBy(a => a.Item1)];
-        throw new NotImplementedException();
+        
+        (double minAngle, double maxAngle)[] angleBins = [
+            (-2, 2), 
+            (-20, -2), 
+            (2, 20), 
+            (-90, -20), 
+            (20, 90), 
+            (-180, -90), 
+            (90, 180), 
+        ];
+        
+        int neuronIndex = 2;
+        foreach (var (minAngle, maxAngle) in angleBins) {
+            // Find all asteroids in this angle bin
+            var asteroidsInBin = gameObjectLocations
+                .Where(a => a.angleDistance >= minAngle && a.angleDistance < maxAngle)
+                .OrderBy(a => a.distance)
+                .ToList();
+            
+            if (asteroidsInBin.Count > 0) {
+                // Get the closest asteroid in this bin
+                var closest = asteroidsInBin[0];
+                neurons[neuronIndex] = closest.distance / 300.0;      // Normalized distance
+                neurons[neuronIndex + 1] = closest.threat / 10.0;     // Normalized threat
+                neurons[neuronIndex + 2] = 1.0;                        // Bin occupied flag
+            } else {
+                neurons[neuronIndex] = 1.0;      // Max distance (no asteroid)
+                neurons[neuronIndex + 1] = 0.0;  // No threat
+                neurons[neuronIndex + 2] = 0.0;  // Bin empty flag
+            }
+            
+            neuronIndex += 3;
+            if (neuronIndex >= neurons.Length) break;
+        }
+        
+        return neurons;
     }
 
     public void PrepareAction(int id, List<double> outputs) {
