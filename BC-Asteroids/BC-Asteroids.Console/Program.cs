@@ -1,5 +1,6 @@
 ﻿using BC_Asteroids.Console;
 using BC_Asteroids.Shared;
+using HowlDev.AI.Structures.NeuralNetwork;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
 using System.Text;
@@ -48,6 +49,8 @@ await socket.ConnectAsync(wsUrl, default);
 
 Console.WriteLine("Connected!");
 
+SimpleNeuralNetwork network = SimpleNeuralNetwork.FromTextFormat(File.ReadAllText("./Gen-1226-Network-306257.txt"));
+
 while (true) {
     var bytes = new byte[1024];
     var result = await socket.ReceiveAsync(bytes, default);
@@ -68,23 +71,14 @@ while (true) {
         Bullets = [.. stringObjects.Bullets.Select(a => Bullet.FromTextFormat(a))]   
     }; 
 
-    Console.WriteLine(gameObjects);
+    // Console.WriteLine(gameObjects);
 
-    List<string> moves =
-    [
-        // Sample moves
-        AvailableMoves.Accelerate(1),
-        AvailableMoves.Turn(0.1),
-    ];
+    double[] repr = HelperClass.GetRepresentation(id, gameObjects.Players, gameObjects.Asteroids);
 
-    ///
-    /// YOUR BOT GOES HERE
-    ///
-    /// Make sure you read the README document for details about 
-    /// how the game works and, in particular, how this AvailableMoves 
-    /// process works. 
-    /// 
-    
+    network.CalculateLayers(new(repr));
+
+    List<string> moves = HelperClass.PrepareAction([.. network.OutputLayer.Values]);   
+    Console.WriteLine($"Taking actions: {string.Join(',', moves)}");
 
 
     await client.PostAsJsonAsync($"/api/game/move/{id}/{playerId}", moves);

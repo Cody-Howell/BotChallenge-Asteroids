@@ -113,9 +113,9 @@ public class AsteroidGame : IGeneticRunner<int> {
             
             if (asteroidsInBin.Count > 0) {
                 // Get the closest asteroid in this bin
-                var closest = asteroidsInBin[0];
-                neurons[neuronIndex] = closest.distance / 300.0;      // Normalized distance
-                neurons[neuronIndex + 1] = closest.threat / 10.0;     // Normalized threat
+                var (angleDistance, distance, threat) = asteroidsInBin[0];
+                neurons[neuronIndex] = distance / 300.0;      // Normalized distance
+                neurons[neuronIndex + 1] = threat / 10.0;     // Normalized threat
                 neurons[neuronIndex + 2] = 1.0;                        // Bin occupied flag
             } else {
                 neurons[neuronIndex] = 1.0;      // Max distance (no asteroid)
